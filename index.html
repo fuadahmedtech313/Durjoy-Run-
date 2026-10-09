@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical System Error - System Compromised</title>
+    <style>
+        body {
+            background-color: black;
+            color: #ff0000;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+            cursor: progress;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        .alarm-title {
+            text-align: center;
+            font-size: 32px;
+            color: yellow;
+            animation: blink 0.5s infinite;
+            font-weight: bold;
+        }
+        .log-text {
+            color: #ff4444;
+            font-size: 16px;
+            display: none;
+        }
+        .log-text.active {
+            display: block;
+        }
+        .critical {
+            color: #ffffff;
+            background-color: #aa0000;
+            padding: 0 5px;
+        }
+        .progress-bar-container {
+            display: none;
+            width: 100%;
+            height: 30px;
+            background-color: #222;
+            border: 2px solid yellow;
+            margin-top: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff8800);
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: black;
+            font-weight: bold;
+            line-height: 30px;
+            font-size: 18px;
+        }
+        .shake-body {
+             animation: shake 0.5s;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="alarmTerminal">
+    <div class="alarm-title" id="mainAlarmTitle">SYSTEM BREACH DETECTED - DATA THEFT INITIATED</div>
+</div>
+
+<script>
+    const horrificHackLines = [
+        "> ACCESSING DEVICE ROOT... SUCCESS",
+        "> Locating target: " + (Math.random().toString(36).substring(2, 7)) + "X86",
+        "> GATHERING LOG-IN CREDENTIALS...",
+        "> Browser History... GATHERED",
+        "> Saved Passwords... COPIED",
+        "> Personal Contacts... GATHERED",
+        "> SMS Messages... ACCESSED",
+        "> Accessing Camera... INITIALIZING",
+        "<span class='critical'>> TARGETING DCIM/PHOTOS FOLDER...</span>",
+        "> Preparing secure remote data transfer connection...",
+        "<span class='critical'>> DECRYPTING RSA-4096 ENCRYPTION... FAILED - Bypass... SUCCESS</span>",
+        "> CONNECTED TO RUSSIA_DARK_WEB SERVER [ip: 91.240.118.4]...",
+        "> ESTIMATED FILE SIZE: 3.8 GB",
+        "<span class='alarm-title'>WARNING: DATA DELETION TIMER IS ACTIVE.</span>"
+    ];
+
+    const alarmTerminal = document.getElementById('alarmTerminal');
+
+    function typeLine(index) {
+        if (index >= horrificHackLines.length) {
+            startHorrificTransfer();
+            return;
+        }
+
+        const line = document.createElement('p');
+        line.className = 'log-text';
+        line.innerHTML = horrificHackLines[index];
+        alarmTerminal.appendChild(line);
+
+        if (horrificHackLines[index] && horrificHackLines[index].includes("FAILED")) {
+            line.style.background = "#550000";
+        }
+        if (horrificHackLines[index] && horrificHackLines[index].includes("ACTIVE.")) {
+             setInterval(() => { line.style.opacity = (line.style.opacity === '0' ? '1' : '0'); }, 300);
+        }
+
+        setTimeout(() => {
+            line.classList.add('active');
+            if (index > 4) { 
+                document.body.classList.add('shake-body'); 
+                setTimeout(() => document.body.classList.remove('shake-body'), 500); 
+            }
+            typeLine(index + 1);
+        }, index < 10 ? 300 : 150);
+    }
+
+    function startHorrificTransfer() {
+        const title = document.getElementById('mainAlarmTitle');
+        title.innerText = "TRANSFERRING SENSITIVE FILES - DO NOT SHUT DOWN!";
+        title.style.color = "#ff0000";
+        setInterval(() => { title.style.opacity = (title.style.opacity === '0' ? '1' : '0'); }, 200);
+
+        const progressBarContainer = document.createElement('div');
+        progressBarContainer.className = 'progress-bar-container';
+        alarmTerminal.appendChild(progressBarContainer);
+
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        progressBarContainer.appendChild(progressBar);
+
+        const progressText = document.createElement('div');
+        progressText.className = 'progress-text';
+        progressText.innerText = "Downloading Files... 0%";
+        progressBarContainer.appendChild(progressText);
+
+        progressBarContainer.style.display = 'block';
+        
+        const modal = document.createElement('div');
+        modal.innerHTML = `
+            <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.3); z-index:10000; display:block;">
+                <h1 style="color:yellow; text-align:center; font-size:48px; margin-top:20%;">DATA BREACH - DO NOT INTERRUPT</h1>
+                <p style="color:white; font-size:24px; text-align:center;">Disconnecting may result in complete data deletion.</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            if (progress >= 100) {
+                clearInterval(interval);
+                alarmTerminal.style.background = "#222222";
+                document.body.style.cursor = 'default';
+                modal.style.display = 'none';
+                progressBarContainer.style.background = '#440000';
+                progressBar.style.background = '#550000';
+                progressBar.style.width = '100%';
+                progressText.innerText = 'DATA TRANSFER COMPLETED.';
+                finalShockLines();
+            } else {
+                progress += Math.floor(Math.random() * 20) + 2;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = progress + '%';
+                progressText.innerText = 'Downloading Files... ' + progress + '%';
+            }
+        }, 100);
+    }
+
+    function finalShockLines() {
+        const finalLines = [
+            "<span class='alarm-title'>HACK COMPLETE. YOUR IDENTITY HAS BEEN STOLEN.</span>",
+            "> SHUTTING DOWN SYSTEM...",
+            "> ERASING SYSTEM LOGS...",
+            "> SYSTEM WILL BECOME UNRESPONSIVE IN 3, 2, 1...",
+            "<span class='critical'>> ...JUST KIDDING! 😂 - YOU JUST GOT PRANKED!</span>",
+            "<p style='color:green; font-size:24px;'>> Don't worry, your data is safe. It's just a prank website.</p>"
+        ];
+        
+        let finalIndex = 0;
+        function typeFinal() {
+            if (finalIndex >= finalLines.length) return;
+            const line = document.createElement('p');
+            line.className = 'log-text active';
+            line.innerHTML = finalLines[finalIndex];
+            alarmTerminal.appendChild(line);
+            
+            window.scrollTo(0, document.body.scrollHeight);
+
+            setTimeout(() => {
+                typeFinal();
+            }, 400);
+            finalIndex++;
+        }
+        typeFinal();
+    }
+
+    window.onload = () => {
+         typeLine(0);
+    };
+</script>
+
+</body>
+</html>
