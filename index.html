@@ -2,225 +2,1261 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Critical System Error - System Compromised</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Durjoy Run 3D - Kamal-er Tong Game</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         body {
-            background-color: black;
-            color: #ff0000;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-            margin: 0;
+            font-family: 'Hind Siliguri', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
             overflow: hidden;
-            cursor: progress;
+            background-color: #0f172a;
         }
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
+        .font-pixel {
+            font-family: 'Press Start 2P', monospace;
         }
-        .alarm-title {
-            text-align: center;
-            font-size: 32px;
-            color: yellow;
-            animation: blink 0.5s infinite;
-            font-weight: bold;
-        }
-        .log-text {
-            color: #ff4444;
-            font-size: 16px;
-            display: none;
-        }
-        .log-text.active {
+        canvas {
             display: block;
+            width: 100vw;
+            height: 100vh;
         }
-        .critical {
-            color: #ffffff;
-            background-color: #aa0000;
-            padding: 0 5px;
+        /* Custom UI Glassmorphic styling */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .progress-bar-container {
-            display: none;
-            width: 100%;
-            height: 30px;
-            background-color: #222;
-            border: 2px solid yellow;
-            margin-top: 20px;
-            overflow: hidden;
-            position: relative;
+        .btn-action {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.39);
         }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff0000, #ff8800);
-            box-shadow: 0 0 10px #ff0000;
+        .btn-action:active {
+            transform: scale(0.95);
         }
-        .progress-text {
+        /* Speech Bubble Style */
+        .speech-bubble {
             position: absolute;
-            width: 100%;
-            text-align: center;
-            color: black;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 6px 12px;
+            border-radius: 12px;
             font-weight: bold;
-            line-height: 30px;
-            font-size: 18px;
+            font-size: 14px;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 20;
+            border: 2px solid #ea580c;
         }
-        .shake-body {
-             animation: shake 0.5s;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-900 text-white select-none">
 
-<div class="container" id="alarmTerminal">
-    <div class="alarm-title" id="mainAlarmTitle">SYSTEM BREACH DETECTED - DATA THEFT INITIATED</div>
-</div>
-
-<script>
-    const horrificHackLines = [
-        "> ACCESSING DEVICE ROOT... SUCCESS",
-        "> Locating target: " + (Math.random().toString(36).substring(2, 7)) + "X86",
-        "> GATHERING LOG-IN CREDENTIALS...",
-        "> Browser History... GATHERED",
-        "> Saved Passwords... COPIED",
-        "> Personal Contacts... GATHERED",
-        "> SMS Messages... ACCESSED",
-        "> Accessing Camera... INITIALIZING",
-        "<span class='critical'>> TARGETING DCIM/PHOTOS FOLDER...</span>",
-        "> Preparing secure remote data transfer connection...",
-        "<span class='critical'>> DECRYPTING RSA-4096 ENCRYPTION... FAILED - Bypass... SUCCESS</span>",
-        "> CONNECTED TO RUSSIA_DARK_WEB SERVER [ip: 91.240.118.4]...",
-        "> ESTIMATED FILE SIZE: 3.8 GB",
-        "<span class='alarm-title'>WARNING: DATA DELETION TIMER IS ACTIVE.</span>"
-    ];
-
-    const alarmTerminal = document.getElementById('alarmTerminal');
-
-    function typeLine(index) {
-        if (index >= horrificHackLines.length) {
-            startHorrificTransfer();
-            return;
-        }
-
-        const line = document.createElement('p');
-        line.className = 'log-text';
-        line.innerHTML = horrificHackLines[index];
-        alarmTerminal.appendChild(line);
-
-        if (horrificHackLines[index] && horrificHackLines[index].includes("FAILED")) {
-            line.style.background = "#550000";
-        }
-        if (horrificHackLines[index] && horrificHackLines[index].includes("ACTIVE.")) {
-             setInterval(() => { line.style.opacity = (line.style.opacity === '0' ? '1' : '0'); }, 300);
-        }
-
-        setTimeout(() => {
-            line.classList.add('active');
-            if (index > 4) { 
-                document.body.classList.add('shake-body'); 
-                setTimeout(() => document.body.classList.remove('shake-body'), 500); 
-            }
-            typeLine(index + 1);
-        }, index < 10 ? 300 : 150);
-    }
-
-    function startHorrificTransfer() {
-        const title = document.getElementById('mainAlarmTitle');
-        title.innerText = "TRANSFERRING SENSITIVE FILES - DO NOT SHUT DOWN!";
-        title.style.color = "#ff0000";
-        setInterval(() => { title.style.opacity = (title.style.opacity === '0' ? '1' : '0'); }, 200);
-
-        const progressBarContainer = document.createElement('div');
-        progressBarContainer.className = 'progress-bar-container';
-        alarmTerminal.appendChild(progressBarContainer);
-
-        const progressBar = document.createElement('div');
-        progressBar.className = 'progress-bar';
-        progressBarContainer.appendChild(progressBar);
-
-        const progressText = document.createElement('div');
-        progressText.className = 'progress-text';
-        progressText.innerText = "Downloading Files... 0%";
-        progressBarContainer.appendChild(progressText);
-
-        progressBarContainer.style.display = 'block';
+    <!-- Canvas Container -->
+    <div id="game-container" class="relative w-full h-full overflow-hidden">
         
-        const modal = document.createElement('div');
-        modal.innerHTML = `
-            <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,0,0,0.3); z-index:10000; display:block;">
-                <h1 style="color:yellow; text-align:center; font-size:48px; margin-top:20%;">DATA BREACH - DO NOT INTERRUPT</h1>
-                <p style="color:white; font-size:24px; text-align:center;">Disconnecting may result in complete data deletion.</p>
+        <!-- Dynamic Speech Bubble overlay for generic chasers -->
+        <div id="speech-bubble" class="speech-bubble">কই যাস, চা-য়ের বিল দে!</div>
+
+        <!-- HUD overlay (Active Game Screen) -->
+        <div id="hud-overlay" class="absolute inset-0 pointer-events-none p-4 flex flex-col justify-between hidden z-10">
+            <!-- Top Bar -->
+            <div class="flex justify-between items-start w-full">
+                <!-- Score & High Score -->
+                <div class="glass-panel p-3 rounded-2xl flex flex-col gap-1 min-w-[130px]">
+                    <div class="text-xs text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> স্কোর
+                    </div>
+                    <div id="score-val" class="text-2xl font-black text-white font-pixel">0</div>
+                    <div class="text-[10px] text-slate-400">সেরা: <span id="highscore-val" class="font-bold text-amber-300">0</span></div>
+                </div>
+
+                <!-- Coins & Active Powerups -->
+                <div class="flex flex-col items-end gap-2">
+                    <div class="glass-panel px-4 py-2 rounded-2xl flex items-center gap-2 border border-yellow-500/30">
+                        <i class="fa-solid fa-coins text-yellow-400 text-xl animate-bounce"></i>
+                        <span id="coin-val" class="text-2xl font-black text-yellow-300 font-pixel">0</span>
+                    </div>
+
+                    <!-- Active Timers Bar -->
+                    <div id="active-powerups" class="flex flex-col gap-1.5 w-36">
+                        <!-- Shield Timer -->
+                        <div id="shield-timer-wrap" class="hidden glass-panel p-1.5 rounded-lg flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                            <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                                <div id="shield-bar" class="bg-cyan-400 h-full w-full transition-all duration-100"></div>
+                            </div>
+                        </div>
+                        <!-- Magnet Timer -->
+                        <div id="magnet-timer-wrap" class="hidden glass-panel p-1.5 rounded-lg flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-magnet text-red-400"></i>
+                            <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                                <div id="magnet-bar" class="bg-red-400 h-full w-full transition-all duration-100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        `;
-        document.body.appendChild(modal);
 
-        let progress = 0;
-        const interval = setInterval(() => {
-            if (progress >= 100) {
-                clearInterval(interval);
-                alarmTerminal.style.background = "#222222";
-                document.body.style.cursor = 'default';
-                modal.style.display = 'none';
-                progressBarContainer.style.background = '#440000';
-                progressBar.style.background = '#550000';
-                progressBar.style.width = '100%';
-                progressText.innerText = 'DATA TRANSFER COMPLETED.';
-                finalShockLines();
-            } else {
-                progress += Math.floor(Math.random() * 20) + 2;
-                if (progress > 100) progress = 100;
-                progressBar.style.width = progress + '%';
-                progressText.innerText = 'Downloading Files... ' + progress + '%';
+            <!-- Mobile Controls Helper / Touch Swipe Hints -->
+            <div class="text-center text-xs text-white/50 bg-black/30 backdrop-blur-sm py-1 px-3 rounded-full self-center mb-2 md:hidden">
+                <i class="fa-solid fa-hand-pointer mr-1"></i> ডানে-বামে স্লাইড করো, ওপরে লাফ দাও, নিচে নামো
+            </div>
+        </div>
+
+        <!-- START MENU OVERLAY -->
+        <div id="start-menu" class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-gradient-to-b from-slate-900/90 via-slate-900/95 to-slate-950">
+            <div class="max-w-md w-full glass-panel p-6 rounded-3xl text-center space-y-6 border border-amber-500/20 shadow-2xl relative overflow-hidden">
+                
+                <!-- Game Logo Header -->
+                <div class="space-y-1">
+                    <div class="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-500/30">
+                        কামাল ভাইয়ের টং থেকে পলায়ন!
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-300">
+                        দুরজয় রান 3D
+                    </h1>
+                    <p class="text-xs text-slate-300">চায়ের বিল না দিয়ে দৌড়! পেছনে টংয়ের চিলিং বয়েজ!</p>
+                </div>
+
+                <!-- Total Coins display -->
+                <div class="bg-slate-800/80 rounded-2xl p-3 flex justify-around items-center border border-slate-700">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-coins text-yellow-400 text-2xl"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] text-slate-400 uppercase">মোট কয়েন</div>
+                            <div id="menu-total-coins" class="text-xl font-bold text-yellow-300 font-pixel">0</div>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-700"></div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-400 text-2xl"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] text-slate-400 uppercase">সর্বোচ্চ স্কোর</div>
+                            <div id="menu-high-score" class="text-xl font-bold text-amber-300 font-pixel">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Selected Character Preview -->
+                <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3 text-left">
+                        <div id="char-avatar-icon" class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl text-amber-400">
+                            🏃
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">বর্তমান ক্যারেকটার:</div>
+                            <div id="selected-char-name" class="font-bold text-amber-300 text-sm">দুরজয় (মৌলিক)</div>
+                        </div>
+                    </div>
+                    <button onclick="openShop()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 btn-action">
+                        <i class="fa-solid fa-store"></i> শপ
+                    </button>
+                </div>
+
+                <!-- Start Action Buttons -->
+                <div class="space-y-3 pt-2">
+                    <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xl rounded-2xl shadow-lg shadow-orange-500/30 btn-action uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> খেলা শুরু করো
+                    </button>
+                    <button onclick="openShop()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-sm rounded-2xl border border-amber-500/30 btn-action flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cart-shopping"></i> শপ ও আপগ্রেড
+                    </button>
+                </div>
+
+                <!-- Controls Info -->
+                <div class="text-[11px] text-slate-400 border-t border-slate-800 pt-3">
+                    ⌨️ Arrow Keys / WASD - মুভমেন্ট | 📱 Swiping - মোবাইল কন্ট্রোল
+                </div>
+            </div>
+        </div>
+
+        <!-- SHOP MODAL -->
+        <div id="shop-modal" class="absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/90 hidden">
+            <div class="max-w-lg w-full glass-panel p-5 rounded-3xl space-y-4 max-h-[90vh] overflow-y-auto border border-amber-500/30">
+                <!-- Header -->
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-store text-amber-400 text-xl"></i>
+                        <h2 class="text-xl font-bold text-white">টংয়ের শপ ও আপগ্রেড</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1 text-yellow-300 font-bold text-sm bg-slate-800 px-3 py-1 rounded-full border border-yellow-500/30">
+                            <i class="fa-solid fa-coins text-yellow-400"></i>
+                            <span id="shop-coins-val">0</span>
+                        </div>
+                        <button onclick="closeShop()" class="text-slate-400 hover:text-white text-xl p-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs: Characters / Upgrades -->
+                <div class="flex gap-2">
+                    <button id="tab-btn-chars" onclick="switchShopTab('chars')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition-all">
+                        🏃 ক্যারেকটারসমূহ
+                    </button>
+                    <button id="tab-btn-upgrades" onclick="switchShopTab('upgrades')" class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+                        ⚡ পাওয়ার-আপ আপগ্রেড
+                    </button>
+                </div>
+
+                <!-- Tab Content 1: Characters -->
+                <div id="tab-content-chars" class="space-y-3">
+                    <!-- Dynamic Character Items generated by JS -->
+                </div>
+
+                <!-- Tab Content 2: Upgrades -->
+                <div id="tab-content-upgrades" class="space-y-3 hidden">
+                    <!-- Upgrade 1: Magnet Duration -->
+                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-magnet"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white">কয়েন ম্যাগনেট সময়</div>
+                                <div id="magnet-level-text" class="text-xs text-slate-400">লেভেল ১ (সময়কাল: ৬ সে.)</div>
+                            </div>
+                        </div>
+                        <button id="buy-magnet-btn" onclick="buyUpgrade('magnet')" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl btn-action flex items-center gap-1">
+                            <i class="fa-solid fa-coins"></i> <span id="magnet-cost-text">১০০</span>
+                        </button>
+                    </div>
+
+                    <!-- Upgrade 2: Tea Shield Duration -->
+                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-800 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-mug-hot"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-white">সুপার চা-শিল্ড সময়</div>
+                                <div id="shield-level-text" class="text-xs text-slate-400">লেভেল ১ (সময়কাল: ৫ সে.)</div>
+                            </div>
+                        </div>
+                        <button id="buy-shield-btn" onclick="buyUpgrade('shield')" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-xl btn-action flex items-center gap-1">
+                            <i class="fa-solid fa-coins"></i> <span id="shield-cost-text">১৫০</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <button onclick="closeShop()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700">
+                    বন্ধ করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME OVER OVERLAY -->
+        <div id="gameover-menu" class="absolute inset-0 z-30 flex flex-col items-center justify-center p-4 bg-slate-950/90 hidden">
+            <div class="max-w-md w-full glass-panel p-6 rounded-3xl text-center space-y-5 border border-red-500/30 shadow-2xl">
+                <div class="text-4xl text-red-500 animate-bounce">
+                    <i class="fa-solid fa-user-ninja"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black text-red-400">ধরা পড়ে গেছো!</h2>
+                    <p class="text-xs text-slate-300 mt-1" id="gameover-reason">টংয়ের কাস্টমাররা তোমাকে ধরে ফেলেছে!</p>
+                </div>
+
+                <div class="bg-slate-900/80 p-4 rounded-2xl space-y-2 border border-slate-800">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>অর্জিত স্কোর:</span>
+                        <span id="go-score" class="text-lg font-bold text-amber-300 font-pixel">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>সংগৃহীত কয়েন:</span>
+                        <span id="go-coins" class="text-lg font-bold text-yellow-300 font-pixel">0</span>
+                    </div>
+                    <div class="h-px bg-slate-800 my-1"></div>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>সর্বমোট জমা কয়েন:</span>
+                        <span id="go-total-coins" class="text-lg font-bold text-emerald-400 font-pixel">0</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="startGame()" class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-base rounded-2xl shadow-lg btn-action flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> আবার খেলো
+                    </button>
+                    <button onclick="openShop()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-base rounded-2xl border border-amber-500/30 btn-action flex items-center justify-center">
+                        <i class="fa-solid fa-store"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Web Audio API SFX Synthesizer ---
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playCoin() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            },
+            playJump() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.15);
+            },
+            playPowerup() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            },
+            playCrash() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(40, this.ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.3);
             }
-        }, 100);
-    }
+        };
 
-    function finalShockLines() {
-        const finalLines = [
-            "<span class='alarm-title'>HACK COMPLETE. YOUR IDENTITY HAS BEEN STOLEN.</span>",
-            "> SHUTTING DOWN SYSTEM...",
-            "> ERASING SYSTEM LOGS...",
-            "> SYSTEM WILL BECOME UNRESPONSIVE IN 3, 2, 1...",
-            "<span class='critical'>> ...JUST KIDDING! 😂 - YOU JUST GOT PRANKED!</span>",
-            "<p style='color:green; font-size:24px;'>> Don't worry, your data is safe. It's just a prank website.</p>"
-        ];
-        
-        let finalIndex = 0;
-        function typeFinal() {
-            if (finalIndex >= finalLines.length) return;
-            const line = document.createElement('p');
-            line.className = 'log-text active';
-            line.innerHTML = finalLines[finalIndex];
-            alarmTerminal.appendChild(line);
-            
-            window.scrollTo(0, document.body.scrollHeight);
+        // --- GAME STORAGE & UNLOCKABLE CHARACTERS ---
+        const CHARACTERS = {
+            'durjoy_base': {
+                id: 'durjoy_base',
+                name: 'দুরজয় (মৌলিক)',
+                emoji: '🏃',
+                price: 0,
+                color: 0xea580c,
+                desc: 'সাধারণ স্প্রিন্টার দুরজয়। কাস্টমারদের হাতে ধরা দিতে নারাজ!',
+                speedBonus: 1.0,
+                coinMult: 1.0
+            },
+            'durjoy_getu': {
+                id: 'durjoy_getu',
+                name: 'গেটু দুরজয়',
+                emoji: '⚡',
+                price: 80,
+                color: 0x2563eb,
+                desc: 'ফাস্ট অ্যান্ড ফিউরিয়াস! দৌড়ানোর দ্রুততা বেশি।',
+                speedBonus: 1.15,
+                coinMult: 1.0
+            },
+            'durjoy_tea': {
+                id: 'durjoy_tea',
+                name: 'চা-প্রেমী দুরজয়',
+                emoji: '☕',
+                price: 150,
+                color: 0xd97706,
+                desc: 'চায়ের টানে দৌড়ায়! ২০% বেশি কয়েন বোনাস।',
+                speedBonus: 1.05,
+                coinMult: 1.2
+            },
+            'durjoy_cycle': {
+                id: 'durjoy_cycle',
+                name: 'সাইকেল দুরজয়',
+                emoji: '🚲',
+                price: 300,
+                color: 0x16a34a,
+                desc: 'সুপার স্টাইলিশ রাইডার! ৫০% অতিরিক্ত কয়েন উপার্জনের সুযোগ।',
+                speedBonus: 1.2,
+                coinMult: 1.5
+            }
+        };
 
-            setTimeout(() => {
-                typeFinal();
-            }, 400);
-            finalIndex++;
+        let gameState = {
+            totalCoins: parseInt(localStorage.getItem('durjoy_total_coins') || '0'),
+            highScore: parseInt(localStorage.getItem('durjoy_high_score') || '0'),
+            unlockedChars: JSON.parse(localStorage.getItem('durjoy_unlocked_chars') || '["durjoy_base"]'),
+            selectedChar: localStorage.getItem('durjoy_selected_char') || 'durjoy_base',
+            upgrades: JSON.parse(localStorage.getItem('durjoy_upgrades') || '{"magnet": 1, "shield": 1}')
+        };
+
+        function saveStorage() {
+            localStorage.setItem('durjoy_total_coins', gameState.totalCoins.toString());
+            localStorage.setItem('durjoy_high_score', gameState.highScore.toString());
+            localStorage.setItem('durjoy_unlocked_chars', JSON.stringify(gameState.unlockedChars));
+            localStorage.setItem('durjoy_selected_char', gameState.selectedChar);
+            localStorage.setItem('durjoy_upgrades', JSON.stringify(gameState.upgrades));
         }
-        typeFinal();
-    }
 
-    window.onload = () => {
-         typeLine(0);
-    };
-</script>
+        // --- SHOP SYSTEM LOGIC ---
+        function updateMenuDisplay() {
+            document.getElementById('menu-total-coins').innerText = gameState.totalCoins;
+            document.getElementById('menu-high-score').innerText = gameState.highScore;
+            document.getElementById('shop-coins-val').innerText = gameState.totalCoins;
+            
+            const curChar = CHARACTERS[gameState.selectedChar] || CHARACTERS['durjoy_base'];
+            document.getElementById('selected-char-name').innerText = curChar.name;
+            document.getElementById('char-avatar-icon').innerText = curChar.emoji;
 
+            // Render Chars
+            const charsContainer = document.getElementById('tab-content-chars');
+            charsContainer.innerHTML = '';
+            
+            Object.values(CHARACTERS).forEach(ch => {
+                const isUnlocked = gameState.unlockedChars.includes(ch.id);
+                const isSelected = gameState.selectedChar === ch.id;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-2xl border flex items-center justify-between ${isSelected ? 'bg-amber-500/10 border-amber-500' : 'bg-slate-900/80 border-slate-800'}`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="text-3xl bg-slate-800 p-2 rounded-xl">${ch.emoji}</div>
+                        <div>
+                            <div class="font-bold text-sm text-white">${ch.name} ${isSelected ? '<span class="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">নির্বাচিত</span>' : ''}</div>
+                            <div class="text-xs text-slate-400">${ch.desc}</div>
+                        </div>
+                    </div>
+                    <div>
+                        ${isUnlocked ? 
+                            `<button onclick="selectCharacter('${ch.id}')" ${isSelected ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl text-xs font-bold ${isSelected ? 'bg-slate-800 text-slate-500' : 'bg-amber-500 text-slate-950 btn-action'}">
+                                ${isSelected ? 'সক্রিয়' : 'বাছাই করো'}
+                            </button>` :
+                            `<button onclick="buyCharacter('${ch.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-yellow-500 text-slate-950 btn-action flex items-center gap-1">
+                                <i class="fa-solid fa-coins"></i> ${ch.price}
+                            </button>`
+                        }
+                    </div>
+                `;
+                charsContainer.appendChild(card);
+            });
+
+            // Upgrades info
+            const magLvl = gameState.upgrades.magnet || 1;
+            const shdLvl = gameState.upgrades.shield || 1;
+
+            document.getElementById('magnet-level-text').innerText = `লেভেল ${magLvl} (সময়কাল: ${5 + magLvl} সে.)`;
+            document.getElementById('magnet-cost-text').innerText = magLvl * 100;
+
+            document.getElementById('shield-level-text').innerText = `লেভেল ${shdLvl} (সময়কাল: ${4 + shdLvl} সে.)`;
+            document.getElementById('shield-cost-text').innerText = shdLvl * 120;
+        }
+
+        function openShop() {
+            updateMenuDisplay();
+            document.getElementById('shop-modal').classList.remove('hidden');
+        }
+
+        function closeShop() {
+            document.getElementById('shop-modal').classList.add('hidden');
+        }
+
+        function switchShopTab(tab) {
+            if (tab === 'chars') {
+                document.getElementById('tab-content-chars').classList.remove('hidden');
+                document.getElementById('tab-content-upgrades').classList.add('hidden');
+                document.getElementById('tab-btn-chars').className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition-all';
+                document.getElementById('tab-btn-upgrades').className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all';
+            } else {
+                document.getElementById('tab-content-chars').classList.add('hidden');
+                document.getElementById('tab-content-upgrades').classList.remove('hidden');
+                document.getElementById('tab-btn-chars').className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all';
+                document.getElementById('tab-btn-upgrades').className = 'flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition-all';
+            }
+        }
+
+        function selectCharacter(id) {
+            if (gameState.unlockedChars.includes(id)) {
+                gameState.selectedChar = id;
+                saveStorage();
+                updateMenuDisplay();
+            }
+        }
+
+        function buyCharacter(id) {
+            const ch = CHARACTERS[id];
+            if (ch && gameState.totalCoins >= ch.price) {
+                gameState.totalCoins -= ch.price;
+                gameState.unlockedChars.push(id);
+                gameState.selectedChar = id;
+                saveStorage();
+                updateMenuDisplay();
+                AudioFX.playPowerup();
+            }
+        }
+
+        function buyUpgrade(type) {
+            if (type === 'magnet') {
+                const cost = (gameState.upgrades.magnet || 1) * 100;
+                if (gameState.totalCoins >= cost) {
+                    gameState.totalCoins -= cost;
+                    gameState.upgrades.magnet = (gameState.upgrades.magnet || 1) + 1;
+                    saveStorage();
+                    updateMenuDisplay();
+                    AudioFX.playPowerup();
+                }
+            } else if (type === 'shield') {
+                const cost = (gameState.upgrades.shield || 1) * 120;
+                if (gameState.totalCoins >= cost) {
+                    gameState.totalCoins -= cost;
+                    gameState.upgrades.shield = (gameState.upgrades.shield || 1) + 1;
+                    saveStorage();
+                    updateMenuDisplay();
+                    AudioFX.playPowerup();
+                }
+            }
+        }
+
+        // Initialize UI
+        updateMenuDisplay();
+    </script>
+
+    <script>
+        // --- THREE.JS ENGINE SETUP ---
+        const container = document.getElementById('game-container');
+        let scene, camera, renderer;
+        
+        let runSpeed = 0.55;
+        let baseSpeed = 0.55;
+        let gameActive = false;
+        let currentScore = 0;
+        let sessionCoins = 0;
+        let currentLane = 0; // -1: Left, 0: Center, 1: Right
+        const laneX = [-2.2, 0, 2.2];
+
+        // Player Stats
+        let isJumping = false;
+        let jumpVelocity = 0;
+        let gravity = -0.018;
+        let isSliding = false;
+        let slideTimer = 0;
+
+        // Active Powerup Timers
+        let shieldTimeRemaining = 0;
+        let magnetTimeRemaining = 0;
+
+        // Generic Dialogues for chasers (No personal names)
+        const genericDialogues = [
+            "বিল না দিয়ে কই যাস!",
+            "দাঁড়া মামা!",
+            "চায়ের কাপ দে!",
+            "চা-খোর Durjoy দাঁড়া!",
+            "আইজকা আর রক্ষা নাই!"
+        ];
+
+        // Game Objects Containers
+        let durjoyMesh, durjoyBody, teaShieldBubble;
+        let chasersGroup = [];
+        let trackSegments = [];
+        let obstacles = [];
+        let coins = [];
+        let powerups = [];
+        let sceneryObjects = [];
+
+        // Dynamic Speech Bubble update timer
+        let bubbleTimer = 0;
+
+        function init3D() {
+            // 1. Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87ceeb); // Sky blue
+            scene.fog = new THREE.FogExp2(0x87ceeb, 0.015);
+
+            // 2. Camera
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 150);
+            camera.position.set(0, 4.5, 8);
+            camera.lookAt(0, 1.5, -5);
+
+            // 3. Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // 4. Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xfffaed, 0.9);
+            dirLight.position.set(15, 25, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 50;
+            dirLight.shadow.camera.left = -10;
+            dirLight.shadow.camera.right = 10;
+            scene.add(dirLight);
+
+            // 5. Create Base Player & World elements
+            createDurjoyCharacter();
+            createGenericChasers();
+            buildTrackEnvironment();
+
+            // Window resize handler
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- 3D MESH GENERATORS ---
+        function createDurjoyCharacter() {
+            durjoyMesh = new THREE.Group();
+
+            const charConfig = CHARACTERS[gameState.selectedChar] || CHARACTERS['durjoy_base'];
+            const matColor = charConfig.color;
+
+            // Body / Shirt
+            const bodyGeo = new THREE.CylinderGeometry(0.35, 0.3, 1, 8);
+            const bodyMat = new THREE.MeshLambertMaterial({ color: matColor });
+            durjoyBody = new THREE.Mesh(bodyGeo, bodyMat);
+            durjoyBody.position.y = 1;
+            durjoyBody.castShadow = true;
+            durjoyMesh.add(durjoyBody);
+
+            // Head
+            const headGeo = new THREE.SphereGeometry(0.28, 12, 12);
+            const headMat = new THREE.MeshLambertMaterial({ color: 0xffdbac });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 1.7;
+            head.castShadow = true;
+            durjoyMesh.add(head);
+
+            // Hair / Cap
+            const hairGeo = new THREE.ConeGeometry(0.32, 0.25, 8);
+            const hairMat = new THREE.MeshLambertMaterial({ color: 0x1e293b });
+            const hair = new THREE.Mesh(hairGeo, hairMat);
+            hair.position.set(0, 1.88, 0.05);
+            durjoyMesh.add(hair);
+
+            // Legs
+            const legGeo = new THREE.CylinderGeometry(0.1, 0.08, 0.7);
+            const legMat = new THREE.MeshLambertMaterial({ color: 0x334155 });
+            
+            const leftLeg = new THREE.Mesh(legGeo, legMat);
+            leftLeg.position.set(-0.15, 0.35, 0);
+            leftLeg.name = 'leftLeg';
+            durjoyMesh.add(leftLeg);
+
+            const rightLeg = new THREE.Mesh(legGeo, legMat);
+            rightLeg.position.set(0.15, 0.35, 0);
+            rightLeg.name = 'rightLeg';
+            durjoyMesh.add(rightLeg);
+
+            // Tea Shield Bubble
+            const shieldGeo = new THREE.SphereGeometry(1.2, 16, 16);
+            const shieldMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.35, wireframe: true });
+            teaShieldBubble = new THREE.Mesh(shieldGeo, shieldMat);
+            teaShieldBubble.position.y = 1;
+            teaShieldBubble.visible = false;
+            durjoyMesh.add(teaShieldBubble);
+
+            durjoyMesh.position.set(0, 0, 0);
+            scene.add(durjoyMesh);
+        }
+
+        // Generic Chasers Group (No Uday, Fahim, or Shubho labels)
+        function createGenericChasers() {
+            chasersGroup = [];
+            const colors = [0xd97706, 0x16a34a, 0x9333ea];
+
+            for (let i = 0; i < 3; i++) {
+                const group = new THREE.Group();
+                
+                // Body
+                const bGeo = new THREE.CylinderGeometry(0.35, 0.3, 1, 8);
+                const bMat = new THREE.MeshLambertMaterial({ color: colors[i] });
+                const body = new THREE.Mesh(bGeo, bMat);
+                body.position.y = 1;
+                group.add(body);
+
+                // Head
+                const hGeo = new THREE.SphereGeometry(0.28, 12, 12);
+                const hMat = new THREE.MeshLambertMaterial({ color: 0xffd1a4 });
+                const head = new THREE.Mesh(hGeo, hMat);
+                head.position.y = 1.7;
+                group.add(head);
+
+                // Tea Stall Towel/Gamcha accent on shoulder
+                const gGeo = new THREE.BoxGeometry(0.4, 0.1, 0.2);
+                const gMat = new THREE.MeshLambertMaterial({ color: 0xd97706 });
+                const gamcha = new THREE.Mesh(gGeo, gMat);
+                gamcha.position.set(0.2, 1.4, 0);
+                group.add(gamcha);
+
+                group.position.set(laneX[i], 0, 3.5 + (i * 0.4));
+                scene.add(group);
+                chasersGroup.push(group);
+            }
+        }
+
+        // Track Environment
+        function buildTrackEnvironment() {
+            for (let i = 0; i < 10; i++) {
+                spawnTrackSegment(-i * 20);
+            }
+        }
+
+        function spawnTrackSegment(zPos) {
+            const seg = new THREE.Group();
+
+            // Ground Track
+            const groundGeo = new THREE.PlaneGeometry(10, 20);
+            const groundMat = new THREE.MeshLambertMaterial({ color: 0x85502e }); // Dirt path
+            const ground = new THREE.Mesh(groundGeo, groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            seg.add(ground);
+
+            // Grass Sides
+            const grassGeo = new THREE.PlaneGeometry(30, 20);
+            const grassMat = new THREE.MeshLambertMaterial({ color: 0x3a7d44 });
+            
+            const leftGrass = new THREE.Mesh(grassGeo, grassMat);
+            leftGrass.rotation.x = -Math.PI / 2;
+            leftGrass.position.x = -20;
+            seg.add(leftGrass);
+
+            const rightGrass = new THREE.Mesh(grassGeo, grassMat);
+            rightGrass.rotation.x = -Math.PI / 2;
+            rightGrass.position.x = 20;
+            seg.add(rightGrass);
+
+            // Lane Dividers
+            for (let l = -1; l <= 1; l++) {
+                const lineGeo = new THREE.BoxGeometry(0.1, 0.02, 20);
+                const lineMat = new THREE.MeshBasicMaterial({ color: 0xa3714c });
+                const line = new THREE.Mesh(lineGeo, lineMat);
+                line.position.set(l * 2.2, 0.01, 0);
+                seg.add(line);
+            }
+
+            // Scenery Trees / Bamboos on sides
+            for (let s = -1; s <= 1; s += 2) {
+                const tree = createTreeMesh();
+                tree.position.set(s * (6 + Math.random() * 4), 0, (Math.random() - 0.5) * 16);
+                seg.add(tree);
+            }
+
+            seg.position.z = zPos;
+            scene.add(seg);
+            trackSegments.push(seg);
+        }
+
+        function createTreeMesh() {
+            const tree = new THREE.Group();
+            const trunkGeo = new THREE.CylinderGeometry(0.3, 0.4, 3, 6);
+            const trunkMat = new THREE.MeshLambertMaterial({ color: 0x5c3d2e });
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.y = 1.5;
+            tree.add(trunk);
+
+            const leavesGeo = new THREE.ConeGeometry(2, 4, 6);
+            const leavesMat = new THREE.MeshLambertMaterial({ color: 0x226f3d });
+            const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+            leaves.position.y = 4;
+            tree.add(leaves);
+
+            return tree;
+        }
+
+        // --- OBSTACLES & POWER-UPS SPAWNER ---
+        function createObstacleMesh(type) {
+            const group = new THREE.Group();
+
+            if (type === 'bamboo_fence') { // Jump over
+                const fenceGeo = new THREE.BoxGeometry(2, 0.9, 0.2);
+                const fenceMat = new THREE.MeshLambertMaterial({ color: 0xca8a04 });
+                const fence = new THREE.Mesh(fenceGeo, fenceMat);
+                fence.position.y = 0.45;
+                fence.castShadow = true;
+                group.add(fence);
+                group.userData = { type: 'jumpable', height: 0.9 };
+            } 
+            else if (type === 'tree_branch') { // Slide under
+                const post1 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 2.5), new THREE.MeshLambertMaterial({ color: 0x475569 }));
+                post1.position.set(-1, 1.25, 0);
+                const post2 = post1.clone();
+                post2.position.set(1, 1.25, 0);
+                
+                const log = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 2.2), new THREE.MeshLambertMaterial({ color: 0x78350f }));
+                log.rotation.z = Math.PI / 2;
+                log.position.y = 1.8;
+                
+                group.add(post1, post2, log);
+                group.userData = { type: 'slidable', height: 1.8 };
+            } 
+            else if (type === 'rickshaw') { // High obstacle
+                const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.4, 2.2), new THREE.MeshLambertMaterial({ color: 0xd97706 }));
+                body.position.y = 0.7;
+                group.add(body);
+                group.userData = { type: 'solid', height: 1.4 };
+            }
+            else { // Cow / Haystack
+                const cow = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.1, 1.8), new THREE.MeshLambertMaterial({ color: 0xf8fafc }));
+                cow.position.y = 0.55;
+                group.add(cow);
+                group.userData = { type: 'solid', height: 1.1 };
+            }
+
+            return group;
+        }
+
+        function createCoinMesh() {
+            const coinGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.08, 12);
+            const coinMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.8, roughness: 0.2 });
+            const coin = new THREE.Mesh(coinGeo, coinMat);
+            coin.rotation.x = Math.PI / 2;
+            coin.castShadow = true;
+            return coin;
+        }
+
+        function createMagnetMesh() {
+            const group = new THREE.Group();
+            const magGeo = new THREE.TorusGeometry(0.4, 0.12, 8, 16, Math.PI);
+            const magMat = new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.5 });
+            const mag = new THREE.Mesh(magGeo, magMat);
+            mag.rotation.z = Math.PI;
+            mag.position.y = 0.6;
+            group.add(mag);
+            return group;
+        }
+
+        function createTeaCupMesh() {
+            const group = new THREE.Group();
+            const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.2, 0.6, 12), new THREE.MeshLambertMaterial({ color: 0x06b6d4 }));
+            cup.position.y = 0.5;
+            group.add(cup);
+            return group;
+        }
+
+        // Spawn dynamic obstacles & items ahead
+        function spawnDynamicObjects(zPos) {
+            // Increased Obstacle density
+            const laneChoices = [-1, 0, 1].sort(() => Math.random() - 0.5);
+            const obstacleCount = Math.random() < 0.6 ? 2 : 1; // Frequently 2 lanes blocked
+
+            for (let i = 0; i < obstacleCount; i++) {
+                const lane = laneChoices[i];
+                const types = ['bamboo_fence', 'tree_branch', 'rickshaw', 'cow'];
+                const selectedType = types[Math.floor(Math.random() * types.length)];
+                
+                const obs = createObstacleMesh(selectedType);
+                obs.position.set(laneX[lane + 1], 0, zPos);
+                scene.add(obs);
+                obstacles.push(obs);
+            }
+
+            // Spawn Coins on free lane
+            const freeLane = laneChoices[obstacleCount] !== undefined ? laneChoices[obstacleCount] : 0;
+            for (let c = 0; c < 3; c++) {
+                const coin = createCoinMesh();
+                coin.position.set(laneX[freeLane + 1], 0.6, zPos - (c * 2));
+                scene.add(coin);
+                coins.push(coin);
+            }
+
+            // Power-Up Spawn Chance (Magnet or Rare Super Tea Cup)
+            const randPower = Math.random();
+            if (randPower < 0.2) { // 20% Magnet spawn
+                const mag = createMagnetMesh();
+                mag.position.set(laneX[freeLane + 1], 0.6, zPos - 7);
+                scene.add(mag);
+                powerups.push({ mesh: mag, type: 'magnet' });
+            } else if (randPower > 0.88) { // REDUCED rate: 12% Super Tea Cup spawn
+                const cup = createTeaCupMesh();
+                cup.position.set(laneX[freeLane + 1], 0.6, zPos - 7);
+                scene.add(cup);
+                powerups.push({ mesh: cup, type: 'shield' });
+            }
+        }
+
+        // --- CONTROLS & INPUT SYSTEM ---
+        function setupInputs() {
+            window.addEventListener('keydown', (e) => {
+                if (!gameActive) return;
+                AudioFX.init();
+
+                if ((e.key === 'ArrowLeft' || e.key === 'a') && currentLane > -1) {
+                    currentLane--;
+                } else if ((e.key === 'ArrowRight' || e.key === 'd') && currentLane < 1) {
+                    currentLane++;
+                } else if ((e.key === 'ArrowUp' || e.key === 'w') && !isJumping) {
+                    isJumping = true;
+                    jumpVelocity = 0.32;
+                    AudioFX.playJump();
+                } else if ((e.key === 'ArrowDown' || e.key === 's') && !isSliding) {
+                    isSliding = true;
+                    slideTimer = 30;
+                }
+            });
+
+            // Touch Swipe Gestures
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            window.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (!gameActive) return;
+                AudioFX.init();
+
+                const deltaX = e.changedTouches[0].clientX - touchStartX;
+                const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX < -30 && currentLane > -1) currentLane--; // Swipe Left
+                    else if (deltaX > 30 && currentLane < 1) currentLane++; // Swipe Right
+                } else {
+                    if (deltaY < -30 && !isJumping) { // Swipe Up
+                        isJumping = true;
+                        jumpVelocity = 0.32;
+                        AudioFX.playJump();
+                    } else if (deltaY > 30 && !isSliding) { // Swipe Down
+                        isSliding = true;
+                        slideTimer = 30;
+                    }
+                }
+            }, { passive: true });
+        }
+
+        // --- GAMEPLAY LOOPS & UPDATES ---
+        function startGame() {
+            AudioFX.init();
+
+            // Reset variables
+            const charData = CHARACTERS[gameState.selectedChar] || CHARACTERS['durjoy_base'];
+            baseSpeed = 0.55 * charData.speedBonus;
+            runSpeed = baseSpeed;
+
+            currentScore = 0;
+            sessionCoins = 0;
+            currentLane = 0;
+            isJumping = false;
+            isSliding = false;
+            shieldTimeRemaining = 0;
+            magnetTimeRemaining = 0;
+
+            // Clear Scene items
+            obstacles.forEach(o => scene.remove(o));
+            coins.forEach(c => scene.remove(c));
+            powerups.forEach(p => scene.remove(p.mesh));
+            obstacles = [];
+            coins = [];
+            powerups = [];
+
+            // UI Adjustments
+            document.getElementById('start-menu').classList.add('hidden');
+            document.getElementById('gameover-menu').classList.add('hidden');
+            document.getElementById('hud-overlay').classList.remove('hidden');
+
+            gameActive = true;
+        }
+
+        function gameOver(reason) {
+            gameActive = false;
+            AudioFX.playCrash();
+
+            // Update persistent coins
+            gameState.totalCoins += sessionCoins;
+            if (currentScore > gameState.highScore) {
+                gameState.highScore = Math.floor(currentScore);
+            }
+            saveStorage();
+
+            // Update UI
+            document.getElementById('go-score').innerText = Math.floor(currentScore);
+            document.getElementById('go-coins').innerText = sessionCoins;
+            document.getElementById('go-total-coins').innerText = gameState.totalCoins;
+            document.getElementById('gameover-reason').innerText = reason || "টংয়ের কাস্টমাররা তোমাকে ধরে ফেলেছে!";
+
+            document.getElementById('hud-overlay').classList.add('hidden');
+            document.getElementById('gameover-menu').classList.remove('hidden');
+        }
+
+        function updateSpeechBubble() {
+            const bubbleEl = document.getElementById('speech-bubble');
+            if (!gameActive) {
+                bubbleEl.style.display = 'none';
+                return;
+            }
+
+            bubbleTimer++;
+            if (bubbleTimer % 180 === 0) { // Change text every ~3 secs
+                const randomMsg = genericDialogues[Math.floor(Math.random() * genericDialogues.length)];
+                bubbleEl.innerText = randomMsg;
+            }
+
+            // Position bubble above middle chaser on 2D screen
+            const chaser = chasersGroup[1];
+            if (chaser) {
+                const vector = new THREE.Vector3();
+                chaser.getWorldPosition(vector);
+                vector.y += 2.2;
+                vector.project(camera);
+
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+
+                bubbleEl.style.left = `${x}px`;
+                bubbleEl.style.top = `${y}px`;
+                bubbleEl.style.display = 'block';
+            }
+        }
+
+        // MAIN ANIMATION LOOP
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameActive) {
+                // 1. Acceleration over time
+                runSpeed += 0.0001;
+                currentScore += runSpeed * 0.5;
+
+                // 2. Player Horizontal Smooth Movement
+                const targetX = laneX[currentLane + 1];
+                durjoyMesh.position.x += (targetX - durjoyMesh.position.x) * 0.2;
+
+                // 3. Jump & Gravity Physics
+                if (isJumping) {
+                    durjoyMesh.position.y += jumpVelocity;
+                    jumpVelocity += gravity;
+                    if (durjoyMesh.position.y <= 0) {
+                        durjoyMesh.position.y = 0;
+                        isJumping = false;
+                    }
+                }
+
+                // 4. Slide Physics
+                if (isSliding) {
+                    slideTimer--;
+                    durjoyMesh.scale.set(1, 0.5, 1);
+                    if (slideTimer <= 0) {
+                        durjoyMesh.scale.set(1, 1, 1);
+                        isSliding = false;
+                    }
+                }
+
+                // 5. Running leg animation
+                const time = Date.now() * 0.01;
+                const leftLeg = durjoyMesh.getObjectByName('leftLeg');
+                const rightLeg = durjoyMesh.getObjectByName('rightLeg');
+                if (leftLeg && rightLeg) {
+                    leftLeg.rotation.x = Math.sin(time * runSpeed * 10) * 0.7;
+                    rightLeg.rotation.x = -Math.sin(time * runSpeed * 10) * 0.7;
+                }
+
+                // 6. Update Track Segments
+                trackSegments.forEach(seg => {
+                    seg.position.z += runSpeed;
+                    if (seg.position.z > 20) {
+                        seg.position.z -= 200;
+                        spawnDynamicObjects(seg.position.z);
+                    }
+                });
+
+                // 7. Update Obstacles & Collision
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    const obs = obstacles[i];
+                    obs.position.z += runSpeed;
+
+                    // Collision check
+                    const distZ = Math.abs(obs.position.z - durjoyMesh.position.z);
+                    const distX = Math.abs(obs.position.x - durjoyMesh.position.x);
+
+                    if (distZ < 0.8 && distX < 0.8) {
+                        const obsType = obs.userData.type;
+                        let safe = false;
+
+                        if (obsType === 'jumpable' && isJumping && durjoyMesh.position.y > 0.6) safe = true;
+                        if (obsType === 'slidable' && isSliding) safe = true;
+
+                        if (!safe) {
+                            if (shieldTimeRemaining > 0) { // Shield protects player
+                                scene.remove(obs);
+                                obstacles.splice(i, 1);
+                                shieldTimeRemaining = 0; // Consume shield
+                                AudioFX.playPowerup();
+                                continue;
+                            } else {
+                                gameOver("বাধার সাথে ধাক্কা খেয়েছো!");
+                                return;
+                            }
+                        }
+                    }
+
+                    if (obs.position.z > 10) {
+                        scene.remove(obs);
+                        obstacles.splice(i, 1);
+                    }
+                }
+
+                // 8. Update Coins & Coin Magnet Logic
+                for (let i = coins.length - 1; i >= 0; i--) {
+                    const coin = coins[i];
+                    coin.position.z += runSpeed;
+                    coin.rotation.z += 0.05;
+
+                    // Magnet pulling effect
+                    if (magnetTimeRemaining > 0) {
+                        const distToPlayer = coin.position.distanceTo(durjoyMesh.position);
+                        if (distToPlayer < 12) {
+                            coin.position.x += (durjoyMesh.position.x - coin.position.x) * 0.2;
+                            coin.position.y += (durjoyMesh.position.y + 0.8 - coin.position.y) * 0.2;
+                            coin.position.z += (durjoyMesh.position.z - coin.position.z) * 0.2;
+                        }
+                    }
+
+                    // Pickup check
+                    const distZ = Math.abs(coin.position.z - durjoyMesh.position.z);
+                    const distX = Math.abs(coin.position.x - durjoyMesh.position.x);
+
+                    if (distZ < 0.8 && distX < 0.8) {
+                        const charConfig = CHARACTERS[gameState.selectedChar] || CHARACTERS['durjoy_base'];
+                        sessionCoins += Math.round(1 * charConfig.coinMult);
+                        AudioFX.playCoin();
+                        scene.remove(coin);
+                        coins.splice(i, 1);
+                        continue;
+                    }
+
+                    if (coin.position.z > 10) {
+                        scene.remove(coin);
+                        coins.splice(i, 1);
+                    }
+                }
+
+                // 9. Update Powerups
+                for (let i = powerups.length - 1; i >= 0; i--) {
+                    const p = powerups[i];
+                    p.mesh.position.z += runSpeed;
+                    p.mesh.rotation.y += 0.04;
+
+                    const distZ = Math.abs(p.mesh.position.z - durjoyMesh.position.z);
+                    const distX = Math.abs(p.mesh.position.x - durjoyMesh.position.x);
+
+                    if (distZ < 0.8 && distX < 0.8) {
+                        AudioFX.playPowerup();
+                        if (p.type === 'shield') {
+                            const level = gameState.upgrades.shield || 1;
+                            shieldTimeRemaining = (4 + level) * 60; // Frames
+                        } else if (p.type === 'magnet') {
+                            const level = gameState.upgrades.magnet || 1;
+                            magnetTimeRemaining = (5 + level) * 60;
+                        }
+                        scene.remove(p.mesh);
+                        powerups.splice(i, 1);
+                        continue;
+                    }
+
+                    if (p.mesh.position.z > 10) {
+                        scene.remove(p.mesh);
+                        powerups.splice(i, 1);
+                    }
+                }
+
+                // 10. Update Active Powerup Timers & UI
+                if (shieldTimeRemaining > 0) {
+                    shieldTimeRemaining--;
+                    teaShieldBubble.visible = true;
+                    document.getElementById('shield-timer-wrap').classList.remove('hidden');
+                    const maxFrame = ((gameState.upgrades.shield || 1) + 4) * 60;
+                    document.getElementById('shield-bar').style.width = `${(shieldTimeRemaining / maxFrame) * 100}%`;
+                } else {
+                    teaShieldBubble.visible = false;
+                    document.getElementById('shield-timer-wrap').classList.add('hidden');
+                }
+
+                if (magnetTimeRemaining > 0) {
+                    magnetTimeRemaining--;
+                    document.getElementById('magnet-timer-wrap').classList.remove('hidden');
+                    const maxFrame = ((gameState.upgrades.magnet || 1) + 5) * 60;
+                    document.getElementById('magnet-bar').style.width = `${(magnetTimeRemaining / maxFrame) * 100}%`;
+                } else {
+                    document.getElementById('magnet-timer-wrap').classList.add('hidden');
+                }
+
+                // 11. Chasers animation behind player
+                chasersGroup.forEach((chaser, idx) => {
+                    chaser.position.z = 3.5 + Math.sin(time * 5 + idx) * 0.3;
+                });
+
+                // Update Speech Bubble Overlay
+                updateSpeechBubble();
+
+                // Update HUD Text
+                document.getElementById('score-val').innerText = Math.floor(currentScore);
+                document.getElementById('highscore-val').innerText = gameState.highScore;
+                document.getElementById('coin-val').innerText = sessionCoins;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize Everything on Window Load
+        window.onload = function() {
+            init3D();
+            setupInputs();
+            animate();
+        };
+    </script>
 </body>
 </html>
